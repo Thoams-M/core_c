@@ -99,5 +99,5 @@ for line in program :
                 hexa+="00"
         
     with open("sauvegarde.bin","a") as output:
-        output.write(hexa+"\n")
+        output.write(bytes(hexa+"\n",'ascii'))
         output.close()
