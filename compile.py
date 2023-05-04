@@ -32,27 +32,27 @@ opcode = {
 
 for line in program :
     ##Formatage
-    hexa="0x"
     split=line.replace("\n","")
     split=line.split(" ")
     for i in range (0,len(split)):
         split[i]=split[i].rstrip()
         split[i]=split[i].replace(",","")
         
-    
+
     if split[0] in BCC :
 
-        hexa+=BCC[split[0]]                             ##Brench
+        hexa=BCC[split[0]]                             ##Brench
         if int(split[1])>0:                             ##signe décalage
             hexa+="0"                                   
         else :
             hexa+="1"
-        hexa+=(format(abs(int(split[1])),"x"))               ##Valeur
+        
+        hexa+=(format(abs(int(split[1])),"06x"))               ##Valeur
         
         
     elif split[0] in opcode :
-
-        hexa+="0"                                       ##brench
+        
+        hexa="0"                                       ##brench
         if split[0]=="CMP":
                                                         ##IV flag
             if "R" not in split[2].upper():
@@ -97,7 +97,9 @@ for line in program :
                     hexa+=format(int(re.sub("[^0-9]","",split[3])),"x")
             else:
                 hexa+="00"
-        
+    print(hexa)
+    hexa=(int(hexa,16))
     with open("sauvegarde.bin","ab") as output:
-        output.write(bytes(hexa+"\n",'ascii'))
+        
+        output.write(hexa.to_bytes(4,'big'))
         output.close()
