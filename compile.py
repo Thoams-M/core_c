@@ -98,6 +98,6 @@ for line in program :
             else:
                 hexa+="00"
         
-    with open("sauvegarde.bin","a") as output:
+    with open("sauvegarde.bin","ab") as output:
         output.write(bytes(hexa+"\n",'ascii'))
         output.close()
