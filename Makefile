@@ -3,3 +3,4 @@ all:
 	./core
 clean:
 	rm core
+	rm sauvegarde.bin
