@@ -111,6 +111,7 @@ coeur execute(instruction inst, coeur cpu)
 					{
 						cpu.r[inst.dest] = (cpu.r[inst.ope1] + cpu.r[inst.ope2]) - (Max64Bits+1);
 						cpu.flagADC = 1;
+						printf("Cas d'une addition avec retenue, le flagADC est set à 1\n");
 						
 					}
 					else{cpu.r[inst.dest] = cpu.r[inst.ope1] + cpu.r[inst.ope2];}}
@@ -119,6 +120,7 @@ coeur execute(instruction inst, coeur cpu)
 					{
 						cpu.r[inst.dest] = (cpu.r[inst.ope1] + inst.valeurIv) - (Max64Bits+1);
 						cpu.flagADC = 1;
+						printf("Cas d'une addition avec retenue, le flagADC est set à 1\n");
 					}
 					else{cpu.r[inst.dest] = cpu.r[inst.ope1] + inst.valeurIv;}
 				}
@@ -238,12 +240,9 @@ int main()
 	//nombre de valeur définis ici
 	
 	fseek(fic, 0, SEEK_END);	
-	int nbrInst = (ftell(fic))/4;
+	int nbrInst = ((ftell(fic))/4)-1;
 	fseek(fic, 0, SEEK_SET);
 	int instructionFinal[nbrInst];
-	
-	printf("nombre d'instruction %d\n", nbrInst);
-			
 		
 	/*boucle for jusqu'à ce que il n'y ai plus d'instruction 
 	ordre : -est ce que c'est un branch --> oui = Analyse branch
@@ -256,13 +255,9 @@ int main()
 	
 	cpu.inst = littleToBig(instructionFinal[cpu.pc]);
 	
-
-	printf("cpu.inst = %d\n",cpu.inst);
 	//Recherche de la valeur de branch
 	int branch;
 	branch = cpu.inst>>28;
-
-	printf("branch = %d\n",branch);
 	
 	//le signe de branch se met en negatif et je n'arrive pas à savoir pourquoi 
 	//(mon instruction de 32bits est pourtant celle que je veux.)
@@ -272,20 +267,18 @@ int main()
 	chgmtDeSigne=branch*(-1);
 	branch=chgmtDeSigne;
 	}
-	printf("valeur branch : %d\n",branch);
 	
 	if (7 < branch && branch < 15)
 	{
 
+		printf("Cas d'un BCC, valeur branch : %d\n",branch);
 		//Recherche du signe (24eme bit)
 		int z = cpu.inst>>24;
 		SigneBranch = z & bitSigneBranch;
-		printf("SigneBranch : %d\n",SigneBranch);
 
 
 		//valeur de ce que l'on va ajouter à l'adressage
 		pcBranch = cpu.inst & bitPcBranch;
-		printf("pcBranch = %ld\n", pcBranch);
 
 
 			switch(branch)
@@ -345,15 +338,14 @@ int main()
 	
 	instDecode = decode(cpu);
 	cpu=execute(instDecode,cpu);
-	//cpu.pc -= 1;
-	printf("pc:%d\n",cpu.pc);
+	
+	printf("pc : %d\n",cpu.pc+1);
 	for(int AfficheR=0; AfficheR<15; AfficheR++)
 	{
 	printf("Valeur des registre initial 0x%llx\n", cpu.r[AfficheR]);
 	}
 	
 	//Erreur qui s'affiche si le PC est inférieur à 0 où superieur au nombre d'instruction totale
-	printf("cpu.inst : %d\n",cpu.inst);
 	if(cpu.pc<0 || cpu.pc>nbrInst){
 	printf("ERREUR PC < 0 ou Pc > NombreTotalInstruction\n");
 	return 0;
