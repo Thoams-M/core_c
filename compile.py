@@ -1,9 +1,17 @@
 import re
+import sys
 
-with open("code.s","r") as code :
+if len(sys.argv)<2:
+    print("Aucun fichier passé en argument (mettre chemin relatif)")
+    exit()
+else :
+    fichier=sys.argv[1]
+
+with open(fichier,"r") as code :
     program = code.readlines()
     code.close()
-    
+print("-------------------------------------------------------\n")
+print("Lecture des instructions \n") 
 
 BCC = {
     "B": "8",
@@ -29,7 +37,8 @@ opcode = {
     "LSH": "9",
     "RSH": "a"
 }
-
+print("-------------------------------------------------------\n")
+print("Traduction des instructions \n")
 for line in program :
     ##Formatage
     split=line.replace("\n","")
@@ -119,9 +128,13 @@ for line in program :
                         hexa+=format(int(re.sub("[^0-9]","",split[3])),"x")
                 else:
                     hexa+="00"
-    print(hexa)
     hexa=(int(hexa,16))
+    
     with open("sauvegarde.bin","ab") as output:
         
         output.write(hexa.to_bytes(4,'big'))
         output.close()
+print("-------------------------------------------------------\n")
+print("Ecriture des instruction dans sauvegarde.bin \n")
+print("-------------------------------------------------------\n")
+print("Compilation terminé\n")
