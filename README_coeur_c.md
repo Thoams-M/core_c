@@ -11,4 +11,4 @@ gcc coeur.c -w -o core
 rm core
 rm sauvegarde.bin
 ```
-Attention a chaque make le sauvegarde.bin est effacer il faut donc relancer le compilateur
+Attention a chaque make le sauvegarde.bin est effacer il faut donc relancer le compilateurTesttte
